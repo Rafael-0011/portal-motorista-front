@@ -188,6 +188,7 @@ function MotoristasContent() {
                       <th className="px-4 py-3 text-left font-semibold text-gray-700">Email</th>
                       <th className="px-4 py-3 text-left font-semibold text-gray-700">Telefone</th>
                       <th className="px-4 py-3 text-left font-semibold text-gray-700">Cidade/UF</th>
+                      <th className="px-4 py-3 text-left font-semibold text-gray-700">Status</th>
                       <th className="px-4 py-3 text-left font-semibold text-gray-700">Veículos</th>
                       <th className="px-4 py-3 text-right font-semibold text-gray-700">Ações</th>
                     </tr>
@@ -208,6 +209,15 @@ function MotoristasContent() {
                         </td>
                         <td className="px-4 py-3 text-gray-600">
                           {motorista.cidade}/{motorista.uf}
+                        </td>
+                        <td className="px-4 py-3">
+                          <span className={`px-2 py-1 text-xs font-medium rounded-full ${
+                            motorista.status === 'ATIVO' ? 'bg-green-100 text-green-800' :
+                            motorista.status === 'BLOQUEADO' ? 'bg-red-100 text-red-800' :
+                            'bg-gray-100 text-gray-800'
+                          }`}>
+                            {motorista.status}
+                          </span>
                         </td>
                         <td className="px-4 py-3">
                           <div className="flex flex-wrap gap-1">
