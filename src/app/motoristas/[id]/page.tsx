@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { ProtectedRoute } from '@/src/components/ProtectedRoute';
 import { Card } from '@/src/components/Card';
@@ -16,9 +17,12 @@ function EditarMotoristaContent() {
 
   const { data: motorista, isLoading: loadingMotorista } = useMotorista(id);
   const updateMotorista = useUpdateMotorista();
+  const [emailError, setEmailError] = useState<string | null>(null);
 
   const handleSubmit = async (data: MotoristaFormData) => {
     try {
+      setEmailError(null);
+      
       const payload: any = { ...data };
       
       if (!payload.tiposVeiculo || payload.tiposVeiculo.length === 0) {
@@ -33,10 +37,19 @@ function EditarMotoristaContent() {
       alert('Motorista atualizado com sucesso!');
       router.push('/motoristas');
     } catch (error: any) {
-      alert(
-        error.response?.data?.message ||
-        'Erro ao atualizar motorista. Verifique os dados e tente novamente.'
-      );
+      const errorMessage = error.response?.data?.message || '';
+      
+      // Verifica se o erro é relacionado ao email
+      if (errorMessage.toLowerCase().includes('email') || errorMessage.toLowerCase().includes('e-mail')) {
+        // Remove o email da mensagem de erro
+        const cleanedMessage = errorMessage.replace(/: [\w.-]+@[\w.-]+\.\w+/g, '');
+        setEmailError(cleanedMessage);
+      } else {
+        alert(
+          errorMessage ||
+          'Erro ao atualizar motorista. Verifique os dados e tente novamente.'
+        );
+      }
     }
   };
 
@@ -79,6 +92,7 @@ function EditarMotoristaContent() {
             onSubmit={handleSubmit}
             isLoading={updateMotorista.isPending}
             isEdit={true}
+            emailError={emailError}
           />
         </Card>
       </main>

@@ -44,6 +44,7 @@ interface MotoristaFormProps {
   onSubmit: (data: any) => Promise<void>;
   isLoading?: boolean;
   isEdit?: boolean;
+  emailError?: string | null;
 }
 
 /**
@@ -55,6 +56,7 @@ export function MotoristaForm({
   onSubmit,
   isLoading = false,
   isEdit = false,
+  emailError,
 }: MotoristaFormProps) {
   const { data: vehicleTypes, isLoading: loadingVehicleTypes } = useVehicleTypes();
   
@@ -100,14 +102,19 @@ export function MotoristaForm({
         />
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <Input
-            label="Email"
-            type="email"
-            placeholder="email@exemplo.com"
-            error={errors.email?.message as string}
-            {...register('email')}
-            required
-          />
+          <div>
+            <Input
+              label="Email"
+              type="email"
+              placeholder="email@exemplo.com"
+              error={errors.email?.message as string}
+              {...register('email')}
+              required
+            />
+            {emailError && (
+              <p className="mt-1 text-sm text-red-600">{emailError}</p>
+            )}
+          </div>
 
           <Input
             label={isEdit ? 'Nova Senha (opcional)' : 'Senha'}
@@ -158,7 +165,6 @@ export function MotoristaForm({
       <div className="space-y-4">
         <h3 className="text-lg font-semibold text-gray-900">
           Tipos de Veículo
-          <span className="text-red-500 ml-1">*</span>
         </h3>
         
         <Controller

@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { ProtectedRoute } from '@/src/components/ProtectedRoute';
 import { Card } from '@/src/components/Card';
@@ -12,9 +13,12 @@ import { useCreateMotorista } from '@/src/hooks/useMotoristas';
 function NovoMotoristaContent() {
   const router = useRouter();
   const createMotorista = useCreateMotorista();
+  const [emailError, setEmailError] = useState<string | null>(null);
 
   const handleSubmit = async (data: MotoristaFormData) => {
     try {
+      setEmailError(null);
+      
       if (!data.senha) {
         alert('Senha é obrigatória para criar um novo motorista');
         return;
@@ -30,10 +34,19 @@ function NovoMotoristaContent() {
       alert('Motorista cadastrado com sucesso!');
       router.push('/motoristas');
     } catch (error: any) {
-      alert(
-        error.response?.data?.message ||
-        'Erro ao cadastrar motorista. Verifique os dados e tente novamente.'
-      );
+      const errorMessage = error.response?.data?.message || '';
+      
+      // Verifica se o erro é relacionado ao email
+      if (errorMessage.toLowerCase().includes('email') || errorMessage.toLowerCase().includes('e-mail')) {
+        // Remove o email da mensagem de erro
+        const cleanedMessage = errorMessage.replace(/: [\w.-]+@[\w.-]+\.\w+/g, '');
+        setEmailError(cleanedMessage);
+      } else {
+        alert(
+          errorMessage ||
+          'Erro ao cadastrar motorista. Verifique os dados e tente novamente.'
+        );
+      }
     }
   };
 
@@ -53,6 +66,7 @@ function NovoMotoristaContent() {
           <MotoristaForm
             onSubmit={handleSubmit}
             isLoading={createMotorista.isPending}
+            emailError={emailError}
           />
         </Card>
       </main>
